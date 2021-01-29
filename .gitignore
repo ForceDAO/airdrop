@@ -1,0 +1,14 @@
+node_modules
+
+#Hardhat files
+cache
+artifacts
+
+.env
+
+abi
+
+coverage
+
+coverage.json
+.DS_store
