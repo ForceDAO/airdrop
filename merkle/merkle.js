@@ -1,8 +1,8 @@
 const ethers = require("ethers")
-const leaves = require("./data")
-
+const data = require("./data")
+const {addIndexToLeaves} = require("./helpers")
 const hash = (leaf) => {
-    return ethers.utils.id(leaf)
+	return ethers.utils.id(JSON.stringify(leaf))
 }
 
 const reduceMerkleBranches = (leaves, hash1) => {
@@ -47,12 +47,12 @@ const powerOf2Check = (n) => {
 const computeRoot = () => {
     let root = []
 	let nextHash = []
+	const leaves = addIndexToLeaves(data)
     const leaf = leaves[0]
 	console.log({leaves})
     const leafIndex = leaves.indexOf(leaf)
 
     // powerOf2Check(leaves.length)
-   
     let {firstLevel, adjacentHash} =  firstHashing(leaves, leafIndex)
     const firstHash = adjacentHash
     root.push(...firstLevel)
@@ -65,7 +65,7 @@ const computeRoot = () => {
         root.push(...nextLevel)
 	}
 	nextHash.unshift(firstHash)
-    console.log("proof", {nextHash, root: root[0], leaf: {...leaf, leafIndex}})
+    console.log("proof", {nextHash, root: root[0], leaf})
     console.log({root})
 
 }
