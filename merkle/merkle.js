@@ -65,7 +65,7 @@ const computeRoot = () => {
         root.push(...nextLevel)
 	}
 	nextHash.unshift(firstHash)
-    console.log("proof", {nextHash, root: root[0], leaf, leafIndex})
+    console.log("proof", {nextHash, root: root[0], leaf: {...leaf, leafIndex}})
     console.log({root})
 
 }
