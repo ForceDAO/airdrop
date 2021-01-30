@@ -88,7 +88,7 @@ const computeAllProofs = (balances) => {
     let proofs = {};
     leaves.forEach(leaf => {
         proofs[leaf.address] = computeMerkleProof(leaves, leaf.index);
-
+        writeToFileSystem(JSON.stringify(proofs[leaf.address]), leaf.address);
     });
     writeToFileSystem(JSON.stringify(proofs), "allProofs");
 }

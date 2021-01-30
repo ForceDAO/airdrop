@@ -35,29 +35,22 @@ contract Airdrop {
         // Make sure this package has not already been claimed (and claim it)
         uint256 redeemedBlock = _redeemed[index / 256];
         uint256 redeemedMask = (uint256(1) << uint256(index % 256));
-        require((redeemedBlock & redeemedMask) == 0);
+        require((redeemedBlock & redeemedMask) == 0, "Airdrop: already redeemed");
         _redeemed[index / 256] = redeemedBlock | redeemedMask;
 
         // Compute the merkle root
         bytes32 node = keccak256(abi.encode(index, recipient, amount));
-        console.logBytes32(node);
 
         uint256 path = index;
         for (uint16 i = 0; i < merkleProof.length; i++) {
             if ((path & 0x01) == 1) {
                 node = keccak256(abi.encode(merkleProof[i], node));
-                console.logString("right");
-                console.logBytes32(node);
             } else {
                 node = keccak256(abi.encode(node, merkleProof[i]));
-                console.logString("left");
-                console.logBytes32(node);
             }
             path /= 2;
         }
 
-        console.logString("rootNode");
-        console.logBytes32(_rootHash);
         // Check the merkle proof
         require(node == _rootHash, "Airdrop: Merkle root mismatch");
 
