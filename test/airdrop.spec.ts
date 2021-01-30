@@ -162,6 +162,45 @@ describe("Airdrop", function () {
         ).to.equal(0);
 
       });
+
+      it("should prevent every record from double redeeming", async () => {
+
+        for (let index = 0; index < jsonData.length; index += 1) {
+            const element = jsonData[index];
+
+            // First succeeds.
+            await airdrop.redeemPackage(
+                element.index,
+                element.address,
+                element.amount,
+                allProofs[element.address]
+            );
+
+            expect(
+                await airdropToken.balanceOf(element.address)
+            ).to.equal(element.amount);
+
+        }
+
+        for (let index = 0; index < jsonData.length; index += 1) {
+            const element = jsonData[index];
+
+            // Second attempt must fail.
+            expect(
+              airdrop.redeemPackage(
+                element.index,
+                element.address,
+                element.amount,
+                allProofs[element.address]
+              )
+            ).to.be.revertedWith("Airdrop: already redeemed");
+        }
+
+        expect(
+            await airdropToken.balanceOf(airdrop.address)
+        ).to.equal(0);
+
+      });
   })
 
 });
