@@ -26,7 +26,7 @@ const firstHashing = (leaves, leafIndex) => {
     let hashedLeaves = []
     let adjacentHash
     const sisterHashPosition = leafIndex % 2 === 0 ? leafIndex + 1 : leafIndex - 1 
-        for(i=0; leaves.length > i; i++) {
+        for(let i=0; leaves.length > i; i++) {
             const hashedLeaf =  hash(leaves[i])
             if (i === sisterHashPosition) {
                 adjacentHash = hashedLeaf
