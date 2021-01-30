@@ -8,7 +8,7 @@
 		"test": "hardhat test"
 	},
 	"author": "",
-	"license": "Proprietary",
+	"license": "MIT",
 	"devDependencies": {
 		"@nomiclabs/hardhat-ethers": "^2.0.1",
 		"@nomiclabs/hardhat-etherscan": "^2.1.1",
