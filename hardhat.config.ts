@@ -1,7 +1,7 @@
-const { task, HardhatUserConfig } =  require("hardhat/config");
-import ("@nomiclabs/hardhat-ethers");
-import ("@nomiclabs/hardhat-waffle");
-import ("@nomiclabs/hardhat-etherscan");
+import { task, HardhatUserConfig } from "hardhat/config";
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-etherscan";
 
 require("dotenv").config();
 
@@ -23,14 +23,12 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
 
 
 task("deploy", "Deploys new token contract")
-  .addParam("name", "The name string of the token")
-  .addParam("symbol", "The symbol string of the token")
   .setAction(async (args, hre) => {
     // We get the contract to deploy
-    const LodeXToken = await hre.ethers.getContractFactory("LodeXToken");
-    const lodeXToken = await LodeXToken.deploy(args.name, args.symbol);
+    const Airdrop = await hre.ethers.getContractFactory("Airdrop");
+    const airdrop = await Airdrop.deploy();
 
-    console.log("LodeXToken deployed to:", lodeXToken.address);
+    console.log("Airdrop deployed to:", airdrop.address);
   });
 
 
@@ -39,7 +37,7 @@ task("deploy", "Deploys new token contract")
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
-const config = {
+const config: HardhatUserConfig = {
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
@@ -56,11 +54,9 @@ const config = {
     },
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY
+    apiKey: ETHERSCAN_API_KEY,
   },
   solidity: "0.7.3",
 };
 
-module.exports = {
-  config
-};
+export default config;
