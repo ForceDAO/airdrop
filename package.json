@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"build": "npx hardhat compile",
-		"genreate-proofs": "npx ts-node merkle/merkle.ts",
+		"generate-proofs": "npx ts-node merkle/merkle.ts",
 		"test": "npx hardhat test"
 	},
 	"author": "",
