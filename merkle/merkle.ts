@@ -1,17 +1,22 @@
-const ethers = require("ethers")
+import { utils } from "ethers";
 const data = require("./data")
-const {addIndexToLeaves} = require("./helpers")
+
 const hash = (leaf) => {
-	return ethers.utils.id(JSON.stringify(leaf))
+	return utils.id(
+    utils.defaultAbiCoder.encode(
+      ["uint256", "address", "uint256"],
+      [leaf.index, leaf.address, leaf.amount]
+    )
+  );
 }
 
 const reduceMerkleBranches = (leaves, hash1) => {
-    let output = []
-    let i =0
+    let output = [];
+    let i = 0;
     const adjacentHashIndex = leaves.indexOf(hash1)
     console.log({nodes: leaves})
     while (leaves.length) {
-        i++
+        i += 1
         let left = leaves.shift()
         let right = (leaves.length === 0) ? left: leaves.shift();
         output.push(hash(left + right)) 
@@ -26,7 +31,7 @@ const firstHashing = (leaves, leafIndex) => {
     let hashedLeaves = []
     let adjacentHash
     const sisterHashPosition = leafIndex % 2 === 0 ? leafIndex + 1 : leafIndex - 1 
-        for(let i=0; leaves.length > i; i++) {
+        for(let i = 0; leaves.length > i; i += 1) {
             const hashedLeaf =  hash(leaves[i])
             if (i === sisterHashPosition) {
                 adjacentHash = hashedLeaf
@@ -36,23 +41,34 @@ const firstHashing = (leaves, leafIndex) => {
         return {firstLevel: hashedLeaves, adjacentHash}  
 } 
 
-const powerOf2Check = (n) => {
-   const isPowerOf2 =  n && (n & (n - 1)) === 0
-   if (!isPowerOf2) {
-       throw new Error("hey wait no stop")
-   }
+const sortAndAddIndex = (balances) => {
+  balances.sort(function (a, b) {
+    const al = a.address.toLowerCase();
+    const bl = b.address.toLowerCase();
+    if (al < bl) {
+      return -1;
+    }
+    if (al > bl) {
+      return 1;
+    }
+    return 0;
+  });
+
+  return balances.map(function (a, i) {
+    return { address: a, balance: balances[a], index: i };
+  });
 }
 
 
 const computeRoot = () => {
     let root = []
 	let nextHash = []
-	const leaves = addIndexToLeaves(data)
+	const leaves = sortAndAddIndex(data);
     const leaf = leaves[0]
 	console.log({leaves})
     const leafIndex = leaves.indexOf(leaf)
 
-    // powerOf2Check(leaves.length)
+
     let {firstLevel, adjacentHash} =  firstHashing(leaves, leafIndex)
     const firstHash = adjacentHash
     root.push(...firstLevel)
@@ -69,7 +85,5 @@ const computeRoot = () => {
     console.log({root})
 
 }
-
-
 
 computeRoot()

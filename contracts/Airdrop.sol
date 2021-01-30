@@ -30,13 +30,13 @@ contract AirDrop {
         _redeemed[index / 256] = redeemedBlock | redeemedMask;
 
         // Compute the merkle root
-        bytes32 node = keccak256(abi.encodePacked(index, recipient, amount));
+        bytes32 node = keccak256(abi.encode(index, recipient, amount));
         uint256 path = index;
         for (uint16 i = 0; i < merkleProof.length; i++) {
             if ((path & 0x01) == 1) {
-                node = keccak256(abi.encodePacked(merkleProof[i], node));
+                node = keccak256(abi.encode(merkleProof[i], node));
             } else {
-                node = keccak256(abi.encodePacked(node, merkleProof[i]));
+                node = keccak256(abi.encode(node, merkleProof[i]));
             }
             path /= 2;
         }
