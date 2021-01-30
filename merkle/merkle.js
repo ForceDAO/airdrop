@@ -1,6 +1,7 @@
 const ethers = require("ethers");
 const data = require("./data");
-const { addIndexToLeaves } = require("./helpers");
+const { addIndexToLeaves, writeToFileSystem } = require("./helpers");
+
 const hash = (leaf) => {
   return ethers.utils.id(JSON.stringify(leaf));
 };
@@ -67,18 +68,23 @@ const computeRoot = (initialLeaves, i) => {
     root.push(...nextLevel);
     nextHash.unshift(firstHash);
   }
-  return {nextHash, leaf };
+  if (root && !i) {
+	writeToFileSystem(JSON.stringify({root: root[0]}), "root")
+  }
+  return {nextHash, leaf};
 };
 
 const merlkeTree = () => {
   const leaves = addIndexToLeaves(data);
   let i = 0
+  let proofs = []
   while (leaves.length > i) {
 	const newLeaves = leaves
-    const returned = computeRoot(newLeaves, i);
-	console.log(returned);
+	const proof = computeRoot(newLeaves, i);
+	proofs.push(proof)
 	i++
   }
+  writeToFileSystem(JSON.stringify(proofs), "proofs")
 };
 
 merlkeTree();
