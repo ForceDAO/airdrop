@@ -1,19 +1,14 @@
-const fs = require("fs");
-const path = require("path");
+import { writeFileSync } from 'fs';
 
-const addIndexToLeaves = (leaves) => {
+
+export const addIndexToLeaves = (leaves) => {
 	leaves.map((x, i) => {
 		x.index = i
 	})
 	return leaves
 }	
 
-const writeToFileSystem = (data, path) => {
-	fs.writeFileSync(`./data/${path}.json`, data);
+export const writeToFileSystem = (data, path) => {
+	writeFileSync(`./merkle/data/${path}.json`, data);
 	console.log(`info written to data/${path}.json`)
-}
-
-module.exports = {
-	addIndexToLeaves,
-	writeToFileSystem
 }
