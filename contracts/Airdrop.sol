@@ -15,13 +15,15 @@ contract Airdrop {
     IERC20 public immutable _token;
     uint256 public immutable _blockDeadline;
     uint256 public immutable _blockReductionsBegin;
+    address public immutable _treasury;
 
     mapping (uint256 => uint256) _redeemed;
 
-    constructor(IERC20 token, bytes32 rootHash) {
+    constructor(IERC20 token, bytes32 rootHash, address treasury) {
         
         _token = token;
         _rootHash = rootHash;
+        _treasury = treasury;
 
         _blockReductionsBegin = block.number
             .add(THREE_WEEKS_OF_BLOCKS);
@@ -89,5 +91,17 @@ contract Airdrop {
             .div(THREE_DAYS_OF_BLOCKS);
 
         return originalAmount.sub(reduceBy);
+    }
+
+    function sweepPostDeadline(IERC20 token)
+        public
+    {
+        require(block.number > _blockDeadline, "Airdrop: Deadline has not yet passed.");
+
+        uint256 tokenBalance = IERC20(token).balanceOf(address(this));
+        require(
+            IERC20(token).transfer(_treasury, tokenBalance),
+            "Airdrop: Token transfer to treasury fail"
+        );
     }
 }
