@@ -28,6 +28,7 @@
 	},
 	"dependencies": {
 		"@openzeppelin/contracts": "^3.3.0",
-		"fs": "^0.0.1-security"
+		"fs": "^0.0.1-security",
+		"should": "^13.2.3"
 	}
 }
