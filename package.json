@@ -4,8 +4,9 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"build": "hardhat compile",
-		"test": "hardhat test"
+		"build": "npx hardhat compile",
+		"generate-proofs": "npx ts-node merkle/merkle.ts",
+		"test": "npx hardhat test"
 	},
 	"author": "",
 	"license": "MIT",
