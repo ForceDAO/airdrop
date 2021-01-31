@@ -2,6 +2,7 @@ import { task, HardhatUserConfig } from "hardhat/config";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-etherscan";
+const rootHash = require("./merkle/data/rootHash");
 
 require("dotenv").config();
 
@@ -23,10 +24,11 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
 
 
 task("deploy", "Deploys new token contract")
+.addParam("token", "The Delta token address")
   .setAction(async (args, hre) => {
     // We get the contract to deploy
     const Airdrop = await hre.ethers.getContractFactory("Airdrop");
-    const airdrop = await Airdrop.deploy();
+    const airdrop = await Airdrop.deploy(args.token, rootHash);
 
     console.log("Airdrop deployed to:", airdrop.address);
   });
@@ -50,7 +52,7 @@ const config: HardhatUserConfig = {
       accounts: [`0x${MAINNET_PRIVATE_KEY}`],
     },
     ganache: {
-      url: "http://127.0.0.1:8555",
+      url: "http://127.0.0.1:8545",
     },
   },
   etherscan: {

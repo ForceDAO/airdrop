@@ -5,10 +5,10 @@ const { assert } = require("chai");
 
 describe("sanitize", function () {
 	
-  it.only("should run pass good data", async () => {
+  it("should run pass good data", async () => {
     sanitize(data);
   });
-  it.only("should fail with duplicate address", async () => {
+  it("should fail with duplicate address", async () => {
     data[0].address = data[1].address;
     try {
       sanitize(data);
@@ -20,7 +20,7 @@ describe("sanitize", function () {
       );
     }
   });
-  it.only("should fail with bad address", async () => {
+  it("should fail with bad address", async () => {
     data[0].address = "0x1bd4Cec6F1CB4F26F7D620897fa1f8A9111bbB1";
     try {
       sanitize(data);
@@ -33,7 +33,7 @@ describe("sanitize", function () {
 	}
 	data[0].address = "0x1bd4Cec6F1CB4F26F7D620897fa1f8A9111bbB12";
   });
-  it.only("should fail with bad number", async () => {
+  it("should fail with bad number", async () => {
 	data[0].amount = "12wfds"
     try {
       sanitize(data);
