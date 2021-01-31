@@ -6,22 +6,14 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract Airdrop {
 
-    bytes32 private _rootHash;
-    IERC20 private _token;
+    bytes32 public _rootHash;
+    IERC20 public _token;
 
     mapping (uint256 => uint256) _redeemed;
 
     constructor(IERC20 token, bytes32 rootHash) {
         _token = token;
         _rootHash = rootHash;
-    }
-
-    function getRootHash() public view returns(bytes32) {
-        return _rootHash;
-    }
-
-    function getTokenAddress() public view returns(address) {
-        return address(_token);
     }
 
     function redeemed(uint256 index) public view returns (bool) {

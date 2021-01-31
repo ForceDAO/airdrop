@@ -34,8 +34,8 @@ describe("Airdrop", function () {
   });
 
   it("should record constructor arguments", async () => {
-    expect(await airdrop.getRootHash()).to.equal(rootHash);
-    expect(await airdrop.getTokenAddress()).to.equal(airdropToken.address);
+    expect(await airdrop._rootHash()).to.equal(rootHash);
+    expect(await airdrop._token()).to.equal(airdropToken.address);
   });
 
   it("should fail if no tokens available", async () => {
