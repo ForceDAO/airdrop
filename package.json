@@ -7,6 +7,9 @@
 		"sanitize": "npx ts-node merkle/sanitizeData.ts",
 		"build": "npx hardhat compile",
 		"generate-proofs": "npx ts-node merkle/merkle.ts",
+		"deploy:ganache": "hardhat deploy --network ganache --token 0x5b8eb89e04b7e5800e1834a4191cc67749878435",
+		"deploy:rinkeby": "hardhat deploy --network rinkeby --token 0x5b8eb89e04b7e5800e1834a4191cc67749878435",
+		"deploy:mainnet": "hardhat deploy --network mainnet --token 0x5b8eb89e04b7e5800e1834a4191cc67749878435",
 		"test": "npx hardhat test"
 	},
 	"author": "",
@@ -28,6 +31,7 @@
 	},
 	"dependencies": {
 		"@openzeppelin/contracts": "^3.3.0",
-		"fs": "^0.0.1-security"
+		"fs": "^0.0.1-security",
+		"should": "^13.2.3"
 	}
 }

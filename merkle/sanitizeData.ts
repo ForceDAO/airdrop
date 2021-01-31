@@ -3,7 +3,7 @@ import { utils, BigNumber } from "ethers";
 
 let totalAmount = BigNumber.from("0");
 
-const sanitize = (data) => {
+export const sanitize = (data) => {
   findDuplicates(data);
   data.map((user) => {
     validateAddress(user.address);
