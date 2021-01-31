@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
+		"sanitize": "npx ts-node merkle/sanitizeData.ts",
 		"build": "npx hardhat compile",
 		"generate-proofs": "npx ts-node merkle/merkle.ts",
 		"test": "npx hardhat test"
