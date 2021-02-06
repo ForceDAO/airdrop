@@ -45,7 +45,7 @@ describe("Airdrop", function () {
   });
 
   it("should fail if no tokens available", async () => {
-    expect(
+    await expect(
       airdrop.redeemPackage(
         jsonData[0].index,
         jsonData[0].address,
@@ -99,7 +99,7 @@ describe("Airdrop", function () {
     });
 
     it("should fail if wrong amount", async () => {
-      expect(
+      await expect(
         airdrop.redeemPackage(
           jsonData[0].index,
           jsonData[0].address,
@@ -236,7 +236,7 @@ describe("Airdrop", function () {
 
       await increaseTime(ethers, 2073600);
 
-      expect(
+      await expect(
         airdrop.redeemPackage(
           jsonData[0].index,
           jsonData[0].address,
