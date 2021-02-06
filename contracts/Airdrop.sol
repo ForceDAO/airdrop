@@ -4,12 +4,11 @@ pragma solidity ^0.7.0;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 
-
 contract Airdrop {
     using SafeMath for uint256;
 
-    uint256 private constant THREE_WEEKS_OF_BLOCKS = 135450; // Estimated based on 6450 daily blocks * 7 days * 3 weeks.
-    uint256 private constant THREE_DAYS_OF_BLOCKS = 19350;   // Estimated based on 6450 daily blocks * 3 days.
+    uint256 private constant THREE_WEEKS = 3 weeks;
+    uint256 private constant THREE_DAYS = 3 days;
 
     bytes32 public immutable _rootHash;
     IERC20 public immutable _token;
@@ -25,12 +24,12 @@ contract Airdrop {
         _rootHash = rootHash;
         _treasury = treasury;
 
-        _blockReductionsBegin = block.number
-            .add(THREE_WEEKS_OF_BLOCKS);
+        _blockReductionsBegin = block.timestamp
+            .add(THREE_WEEKS);
         
-        _blockDeadline = block.number
-            .add(THREE_WEEKS_OF_BLOCKS)
-            .add(THREE_DAYS_OF_BLOCKS);
+        _blockDeadline = block.timestamp
+            .add(THREE_WEEKS)
+            .add(THREE_DAYS);
     }
 
     function redeemed(uint256 index) public view returns (bool) {
@@ -41,7 +40,7 @@ contract Airdrop {
 
     function redeemPackage(uint256 index, address recipient, uint256 amount, bytes32[] memory merkleProof) public {
 
-        require(block.number <= _blockDeadline, "Airdrop: Redemption deadline passed.");
+        require(block.timestamp <= _blockDeadline, "Airdrop: Redemption deadline passed.");
 
         // Make sure this package has not already been claimed (and claim it)
         uint256 redeemedBlock = _redeemed[index / 256];
@@ -67,7 +66,7 @@ contract Airdrop {
 
         // Redeem!
         uint256 sendAmount = amount;
-        if (block.number > _blockReductionsBegin) {
+        if (block.timestamp > _blockReductionsBegin) {
             sendAmount = reducedAmount(amount);
         }
 
@@ -83,12 +82,12 @@ contract Airdrop {
         view
         returns (uint256)
     {
-        uint256 blocksSinceReductionStarted = block.number
+        uint256 blocksSinceReductionStarted = block.timestamp
             .sub(_blockReductionsBegin);
 
         uint256 reduceBy = blocksSinceReductionStarted
             .mul(originalAmount)
-            .div(THREE_DAYS_OF_BLOCKS);
+            .div(THREE_DAYS);
 
         return originalAmount.sub(reduceBy);
     }
@@ -96,7 +95,7 @@ contract Airdrop {
     function sweepPostDeadline(IERC20 token)
         public
     {
-        require(block.number > _blockDeadline, "Airdrop: Deadline has not yet passed.");
+        require(block.timestamp > _blockDeadline, "Airdrop: Deadline has not yet passed.");
 
         uint256 tokenBalance = IERC20(token).balanceOf(address(this));
         require(
