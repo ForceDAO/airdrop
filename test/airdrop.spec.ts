@@ -88,7 +88,7 @@ describe("Airdrop", function () {
         jsonData[0].amount
       );
 
-      expect(
+      await expect(
         airdrop.redeemPackage(
           jsonData[0].index,
           jsonData[0].address,
@@ -121,7 +121,7 @@ describe("Airdrop", function () {
     });
 
     it("should fail if wrong address", async () => {
-      expect(
+      await expect(
         airdrop.redeemPackage(
           jsonData[0].index,
           ethers.constants.AddressZero,
@@ -178,7 +178,7 @@ describe("Airdrop", function () {
         );
 
         // Immediate second attempt must fail.
-        expect(
+        await expect(
           airdrop.redeemPackage(
             element.index,
             element.address,
@@ -192,7 +192,7 @@ describe("Airdrop", function () {
         const element = jsonData[index];
 
         // Later second attempt must fail.
-        expect(
+        await expect(
           airdrop.redeemPackage(
             element.index,
             element.address,
