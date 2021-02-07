@@ -47,10 +47,10 @@ describe("Airdrop", function () {
   it("should fail if no tokens available", async () => {
     await expect(
       airdrop.redeemPackage(
-        jsonData[0].index,
-        jsonData[0].address,
-        jsonData[0].amount,
-        allProofs[jsonData[0].address]
+        allProofs[0].leaf.index,
+        allProofs[0].leaf.address,
+        allProofs[0].leaf.amount,
+        allProofs[0].proof
       )
     ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
   });
@@ -65,10 +65,10 @@ describe("Airdrop", function () {
 
     it("should succeed if proof is correct", async () => {
       await airdrop.redeemPackage(
-        jsonData[0].index,
-        jsonData[0].address,
-        jsonData[0].amount,
-        allProofs[jsonData[0].address]
+        allProofs[0].leaf.index,
+        allProofs[0].leaf.address,
+        allProofs[0].leaf.amount,
+        allProofs[0].proof
       );
 
       expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(
@@ -78,10 +78,10 @@ describe("Airdrop", function () {
 
     it("should fail to redeem twice", async () => {
       await airdrop.redeemPackage(
-        jsonData[0].index,
-        jsonData[0].address,
-        jsonData[0].amount,
-        allProofs[jsonData[0].address]
+        allProofs[0].leaf.index,
+        allProofs[0].leaf.address,
+        allProofs[0].leaf.amount,
+        allProofs[0].proof
       );
 
       expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(
@@ -90,10 +90,10 @@ describe("Airdrop", function () {
 
       await expect(
         airdrop.redeemPackage(
-          jsonData[0].index,
-          jsonData[0].address,
-          jsonData[0].amount,
-          allProofs[jsonData[0].address]
+          allProofs[0].leaf.index,
+          allProofs[0].leaf.address,
+          allProofs[0].leaf.amount,
+          allProofs[0].proof
         )
       ).to.be.revertedWith("Airdrop: already redeemed");
     });
@@ -101,18 +101,18 @@ describe("Airdrop", function () {
     it("should fail if wrong amount", async () => {
       await expect(
         airdrop.redeemPackage(
-          jsonData[0].index,
-          jsonData[0].address,
-          jsonData[0].amount + "1",
-          allProofs[jsonData[0].address]
+          allProofs[0].leaf.index,
+          allProofs[0].leaf.address,
+          allProofs[0].leaf.amount + "1",
+          allProofs[0].proof
         )
       ).to.be.revertedWith("Airdrop: Merkle root mismatch");
 
       await airdrop.redeemPackage(
-        jsonData[0].index,
-        jsonData[0].address,
-        jsonData[0].amount,
-        allProofs[jsonData[0].address]
+        allProofs[0].leaf.index,
+        allProofs[0].leaf.address,
+        allProofs[0].leaf.amount,
+        allProofs[0].proof
       );
 
       expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(
@@ -123,18 +123,18 @@ describe("Airdrop", function () {
     it("should fail if wrong address", async () => {
       await expect(
         airdrop.redeemPackage(
-          jsonData[0].index,
+          allProofs[0].leaf.index,
           ethers.constants.AddressZero,
-          jsonData[0].amount,
-          allProofs[jsonData[0].address]
+          allProofs[0].leaf.amount,
+          allProofs[0].proof
         )
       ).to.be.revertedWith("Airdrop: Merkle root mismatch");
 
       await airdrop.redeemPackage(
-        jsonData[0].index,
-        jsonData[0].address,
-        jsonData[0].amount,
-        allProofs[jsonData[0].address]
+        allProofs[0].leaf.index,
+        allProofs[0].leaf.address,
+        allProofs[0].leaf.amount,
+        allProofs[0].proof
       );
 
       expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(
@@ -144,17 +144,16 @@ describe("Airdrop", function () {
 
     it("should succeed for every record in the data file", async () => {
       for (let index = 0; index < jsonData.length; index += 1) {
-        const element = jsonData[index];
 
         await airdrop.redeemPackage(
-          element.index,
-          element.address,
-          element.amount,
-          allProofs[element.address]
+          allProofs[index].leaf.index,
+          allProofs[index].leaf.address,
+          allProofs[index].leaf.amount,
+          allProofs[index].proof
         );
 
-        expect(await airdropToken.balanceOf(element.address)).to.equal(
-          element.amount
+        expect(await airdropToken.balanceOf(allProofs[index].leaf.address)).to.equal(
+          allProofs[index].leaf.amount
         );
       }
 
@@ -163,41 +162,39 @@ describe("Airdrop", function () {
 
     it("should prevent every record from double redeeming", async () => {
       for (let index = 0; index < jsonData.length; index += 1) {
-        const element = jsonData[index];
 
         // First succeeds.
         await airdrop.redeemPackage(
-          element.index,
-          element.address,
-          element.amount,
-          allProofs[element.address]
+          allProofs[index].leaf.index,
+          allProofs[index].leaf.address,
+          allProofs[index].leaf.amount,
+          allProofs[index].proof
         );
 
-        expect(await airdropToken.balanceOf(element.address)).to.equal(
-          element.amount
+        expect(await airdropToken.balanceOf(allProofs[index].leaf.address)).to.equal(
+          allProofs[index].leaf.amount
         );
 
         // Immediate second attempt must fail.
         await expect(
           airdrop.redeemPackage(
-            element.index,
-            element.address,
-            element.amount,
-            allProofs[element.address]
+            allProofs[index].leaf.index,
+            allProofs[index].leaf.address,
+            allProofs[index].leaf.amount,
+            allProofs[index].proof
           )
         ).to.be.revertedWith("Airdrop: already redeemed");
       }
 
       for (let index = 0; index < jsonData.length; index += 1) {
-        const element = jsonData[index];
 
         // Later second attempt must fail.
         await expect(
           airdrop.redeemPackage(
-            element.index,
-            element.address,
-            element.amount,
-            allProofs[element.address]
+            allProofs[index].leaf.index,
+            allProofs[index].leaf.address,
+            allProofs[index].leaf.amount,
+            allProofs[index].proof
           )
         ).to.be.revertedWith("Airdrop: already redeemed");
       }
@@ -209,10 +206,10 @@ describe("Airdrop", function () {
       await increaseTime(ethers, 2063550);
 
       await airdrop.redeemPackage(
-        jsonData[0].index,
-        jsonData[0].address,
-        jsonData[0].amount,
-        allProofs[jsonData[0].address]
+        allProofs[0].leaf.index,
+        allProofs[0].leaf.address,
+        allProofs[0].leaf.amount,
+        allProofs[0].proof
       );
 
       expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(4);
@@ -221,10 +218,10 @@ describe("Airdrop", function () {
       await increaseTime(ethers, 1915400);
 
       await airdrop.redeemPackage(
-        jsonData[0].index,
-        jsonData[0].address,
-        jsonData[0].amount,
-        allProofs[jsonData[0].address]
+        allProofs[0].leaf.index,
+        allProofs[0].leaf.address,
+        allProofs[0].leaf.amount,
+        allProofs[0].proof
       );
 
       expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(55);
@@ -238,10 +235,10 @@ describe("Airdrop", function () {
 
       await expect(
         airdrop.redeemPackage(
-          jsonData[0].index,
-          jsonData[0].address,
-          jsonData[0].amount,
-          allProofs[jsonData[0].address]
+          allProofs[0].leaf.index,
+          allProofs[0].leaf.address,
+          allProofs[0].leaf.amount,
+          allProofs[0].proof
         )
       ).to.be.revertedWith("revert Airdrop: Redemption deadline passed.");
 
