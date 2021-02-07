@@ -4,3 +4,6 @@ RINKEBY_PRIVATE_KEY=
 MAINNET_PRIVATE_KEY=
 RINKEBY_ADDRESS=
 RINKEBY_MNEMONIC=
+aws_access_key_id=
+aws_secret_access_key=
+bucket_name=

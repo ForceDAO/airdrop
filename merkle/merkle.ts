@@ -85,9 +85,10 @@ const computeRoot = (balances) => {
 
 const computeAllProofs = (balances) => {
     const leaves = sortAndAddIndex(balances);
-    let proofs = {};
+    let proofs = [];
     leaves.forEach(leaf => {
-        proofs[leaf.address] = computeMerkleProof(leaves, leaf.index);
+        const proof = computeMerkleProof(leaves, leaf.index);
+        proofs.push({proof, leaf})
         // writeToFileSystem(JSON.stringify(proofs[leaf.address]), leaf.address);
     });
     writeToFileSystem(JSON.stringify(proofs), "allProofs");
