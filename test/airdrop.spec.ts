@@ -3,7 +3,6 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import { Contract, Signer } from "ethers";
 import { expect } from "chai";
-import {  hash } from "../merkle/merkle";
 import { increaseTime } from "../utils/utils";
 const rootHash = require("../merkle/data/rootHash.json");
 // const allProofs: any[] = sortAndAddIndex(require("../merkle/data.json"));

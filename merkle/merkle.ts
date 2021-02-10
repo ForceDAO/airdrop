@@ -57,24 +57,6 @@ const computeMerkleProof = (balances, index: number) => {
   return proof;
 };
 
-// export const sortAndAddIndex = (balances) => {
-//   balances.sort(function (a, b) {
-//       const al = a.address.toLowerCase();
-//       const bl = b.address.toLowerCase();
-//       if (al < bl) {
-//         return -1;
-//       }
-//       if (al > bl) {
-//         return 1;
-//       }
-//       return 0;
-//   });
-
-//   return balances.map(function (a, i) {
-//     return { ...a, index: i };
-//   });
-// };
-
 const computeRoot = (balances) => {
   const leaves = balances//sortAndAddIndex(balances);
   let hashedLeaves: string[] = leaves.map(hash);
@@ -90,9 +72,11 @@ const computeAllProofs = (balances) => {
   const leaves = balances//sortAndAddIndex(balances);
   let proofs = [];
   leaves.forEach((leaf, i) => {
+    console.time("proof")
     const proof = computeMerkleProof(leaves, leaf.index);
     proofs.push({ proof, leaf });
     console.log("proof x generated", i)
+    console.timeEnd("proof")
     // writeToFileSystem(JSON.stringify(proofs[leaf.address]), leaf.address);
   });
   writeToFileSystem(JSON.stringify(proofs), "allProofs");
