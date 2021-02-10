@@ -40,7 +40,11 @@ const computeMerkleProof = (balances, index: number) => {
     if (path % 2 == 1) {
       proof.push(hashedLeaves[path - 1]);
     } else {
-      proof.push(hashedLeaves[path + 1]);
+      if (hashedLeaves[path + 1]) {
+        proof.push(hashedLeaves[path + 1]);
+      } else {
+        proof.push(hashedLeaves[path])
+      }
     }
 
     // Reduce the merkle tree one level
