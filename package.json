@@ -24,6 +24,7 @@
 		"@types/node": "^14.14.25",
 		"aws-sdk": "^2.839.0",
 		"chai": "^4.2.0",
+		"csv-parser": "^3.0.0",
 		"dotenv": "^8.2.0",
 		"ethereum-waffle": "^3.2.2",
 		"ethers": "^5.0.26",

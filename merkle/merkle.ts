@@ -1,32 +1,32 @@
 import { utils, BigNumber } from "ethers";
 import { writeToFileSystem } from "./helpers";
-const data = require("./data")
+const data = require("./data");
 
 export const hash = (leaf): string => {
-	return utils.keccak256(
+  return utils.keccak256(
     utils.defaultAbiCoder.encode(
       ["uint256", "address", "uint256"],
       [BigNumber.from(leaf.index), leaf.address, BigNumber.from(leaf.amount)]
     )
   );
-}
+};
 
 const reduceMerkleBranches = (leaves: string[]) => {
-    let output = [];
-    while (leaves.length) {
-        let left = leaves.shift()
-        let right = (leaves.length === 0) ? left : leaves.shift();
-        output.push(
-          utils.keccak256(
-            utils.defaultAbiCoder.encode(["bytes32", "bytes32"],[left, right])
-          )
-        ); 
-    }
-    return output;
-}
+  let output = [];
+  while (leaves.length) {
+    let left = leaves.shift();
+    let right = leaves.length === 0 ? left : leaves.shift();
+    output.push(
+      utils.keccak256(
+        utils.defaultAbiCoder.encode(["bytes32", "bytes32"], [left, right])
+      )
+    );
+  }
+  return output;
+};
 
 const computeMerkleProof = (balances, index: number) => {
-  let leaves = sortAndAddIndex(balances);
+  let leaves = balances//sortAndAddIndex(balances);
   let hashedLeaves: string[] = leaves.map(hash);
 
   if (index == null) {
@@ -51,48 +51,48 @@ const computeMerkleProof = (balances, index: number) => {
   }
 
   return proof;
-}
+};
 
-export const sortAndAddIndex = (balances) => {
-  balances.sort(function (a, b) {
-    const al = a.address.toLowerCase();
-    const bl = b.address.toLowerCase();
-    if (al < bl) {
-      return -1;
-    }
-    if (al > bl) {
-      return 1;
-    }
-    return 0;
-  });
+// export const sortAndAddIndex = (balances) => {
+//   balances.sort(function (a, b) {
+//       const al = a.address.toLowerCase();
+//       const bl = b.address.toLowerCase();
+//       if (al < bl) {
+//         return -1;
+//       }
+//       if (al > bl) {
+//         return 1;
+//       }
+//       return 0;
+//   });
 
-  return balances.map(function (a, i) {
-    return { ...a, index: i };
-  });
-}
-
+//   return balances.map(function (a, i) {
+//     return { ...a, index: i };
+//   });
+// };
 
 const computeRoot = (balances) => {
-    const leaves = sortAndAddIndex(balances);
-    let hashedLeaves: string[] = leaves.map(hash);
+  const leaves = balances//sortAndAddIndex(balances);
+  let hashedLeaves: string[] = leaves.map(hash);
 
-    while (hashedLeaves.length > 1) {
-        hashedLeaves = reduceMerkleBranches(hashedLeaves);
-    }
+  while (hashedLeaves.length > 1) {
+    hashedLeaves = reduceMerkleBranches(hashedLeaves);
+  }
 
-    return hashedLeaves[0];
-}
+  return hashedLeaves[0];
+};
 
 const computeAllProofs = (balances) => {
-    const leaves = sortAndAddIndex(balances);
-    let proofs = [];
-    leaves.forEach(leaf => {
-        const proof = computeMerkleProof(leaves, leaf.index);
-        proofs.push({proof, leaf})
-        // writeToFileSystem(JSON.stringify(proofs[leaf.address]), leaf.address);
-    });
-    writeToFileSystem(JSON.stringify(proofs), "allProofs");
-}
+  const leaves = balances//sortAndAddIndex(balances);
+  let proofs = [];
+  leaves.forEach((leaf, i) => {
+    const proof = computeMerkleProof(leaves, leaf.index);
+    proofs.push({ proof, leaf });
+    console.log("proof x generated", i)
+    // writeToFileSystem(JSON.stringify(proofs[leaf.address]), leaf.address);
+  });
+  writeToFileSystem(JSON.stringify(proofs), "allProofs");
+};
 
-writeToFileSystem(JSON.stringify(computeRoot(data)), 'rootHash');
+writeToFileSystem(JSON.stringify(computeRoot(data)), "rootHash");
 computeAllProofs(data);
