@@ -48,7 +48,6 @@ const computeMerkleProof = (wholeTree: any, index: number) => {
     path = parseInt((path / 2).toString());
     i += 1
   }
-    console.log(proof)
     proof.pop()
 
   return proof;
