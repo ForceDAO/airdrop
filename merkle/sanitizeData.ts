@@ -1,31 +1,33 @@
-const data = require("./data");
-import { utils, BigNumber } from "ethers";
+const data = require("./prepare/addresses.json");
+import { utils, BigNumber, ethers } from "ethers";
+import { writeFileSync } from "fs";
 
-let totalAmount = BigNumber.from("0");
+const totalAmountToDrop = 10_000_000
 
 export const sanitize = (data) => {
-  findDuplicates(data);
-  data.map((user) => {
-    validateAddress(user.address);
-    logTotalAmount(user.amount, user.address);
-  });
-  console.log("the total amount promised is", totalAmount.toString())
-};
-
-const logTotalAmount = (amount, address) => {
-  try {
-    BigNumber.from(amount)
-    totalAmount = totalAmount.add(amount);
-  } catch (e) {
-    throw new Error(
-      `There is an invalid amount ${address}, ${amount}`
-    );
-  }
+  data.map((x) => validateAddress(x));
+  const nonDuplicatedData: any = findDuplicates(data);
+  console.log(data.length, nonDuplicatedData.length);
+  console.log("the total amount of addresses are", nonDuplicatedData.length);
+  const amountPerIndividual = totalAmountToDrop / nonDuplicatedData.length
+  const formattedAmount = ethers.utils.parseEther(amountPerIndividual.toString())
+  console.log(formattedAmount.toString())
+  const formattedData = []
+  let i = 0
+  nonDuplicatedData.map((address) => {
+    if (address) {
+      formattedData.push({address, amount: formattedAmount.toString(), index: i})
+      i += 1
+    }
+  })
+  writeFileSync(`./data.json`, JSON.stringify(formattedData));
 };
 
 const validateAddress = (address) => {
   try {
-    utils.getAddress(address);
+    if (address){
+      utils.getAddress(address);
+    }
   } catch (e) {
     throw new Error(
       `There is an invalid address ${address}, Here is the error message too ${e.message}`
@@ -33,25 +35,8 @@ const validateAddress = (address) => {
   }
 };
 
-const findDuplicates = (arr) => {
-  arr.sort(function (a, b) {
-    const keyA = a.address;
-    const keyB = b.address;
-    if (keyA < keyB) return -1;
-    if (keyA > keyB) return 1;
-    return 0;
-  });
-
-  let results = [];
-  for (let i = 0; i < arr.length - 1; i++) {
-    if (arr[i + 1].address == arr[i].address) {
-      results.push(arr[i]);
-      results.push(arr[i + 1]);
-    }
-  }
-  if (results.length != 0) {
-    throw new Error(`We got duplicates ${JSON.stringify(results)}`);
-  }
+const findDuplicates = (arr): any => {
+  return Array.from(new Set(arr));
 };
 
 sanitize(data);

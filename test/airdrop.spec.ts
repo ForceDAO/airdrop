@@ -3,10 +3,9 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import { Contract, Signer } from "ethers";
 import { expect } from "chai";
-import { sortAndAddIndex, hash } from "../merkle/merkle";
 import { increaseTime } from "../utils/utils";
 const rootHash = require("../merkle/data/rootHash.json");
-const jsonData: any[] = sortAndAddIndex(require("../merkle/data.json"));
+// const allProofs: any[] = sortAndAddIndex(require("../merkle/data.json"));
 const allProofs = require("../merkle/data/allProofs.json");
 
 describe("Airdrop", function () {
@@ -14,13 +13,18 @@ describe("Airdrop", function () {
   let airdrop: Contract;
   let airdropToken: Contract;
 
-  const totalTokens = jsonData.reduce(
-    (previousValue: any, currentValue: any) => {
-      return previousValue.add(ethers.BigNumber.from(currentValue.amount));
-    },
-    ethers.BigNumber.from("0")
-  );
-
+  const totalTokens = ethers.BigNumber.from("10000000000000000000000000")
+  // //allProofs.reduce(
+  //   (previousValue: any, currentValue: any) => {
+  //     return previousValue.add(ethers.BigNumber.from(currentValue.amount));
+  //   },
+  //   ethers.BigNumber.from("0")
+  // );
+  const sampleSize = 100
+  const random = Math.floor(Math.random() * allProofs.length) + 1   
+  let loop = random + sampleSize >= allProofs.length ? random - sampleSize : random
+  const end = random + sampleSize >= allProofs.length ? random  : random + sampleSize
+  const endAmount = totalTokens.sub(ethers.BigNumber.from(allProofs[0].leaf.amount).mul(ethers.BigNumber.from(sampleSize)))
   beforeEach(async function () {
     [alice, treasury] = await ethers.getSigners();
 
@@ -71,8 +75,8 @@ describe("Airdrop", function () {
         allProofs[0].proof
       );
 
-      expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(
-        jsonData[0].amount
+      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.equal(
+        allProofs[0].leaf.amount
       );
     });
 
@@ -84,8 +88,8 @@ describe("Airdrop", function () {
         allProofs[0].proof
       );
 
-      expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(
-        jsonData[0].amount
+      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.equal(
+        allProofs[0].leaf.amount
       );
 
       await expect(
@@ -115,8 +119,8 @@ describe("Airdrop", function () {
         allProofs[0].proof
       );
 
-      expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(
-        jsonData[0].amount
+      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.equal(
+        allProofs[0].leaf.amount
       );
     });
 
@@ -137,14 +141,13 @@ describe("Airdrop", function () {
         allProofs[0].proof
       );
 
-      expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(
-        jsonData[0].amount
+      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.equal(
+        allProofs[0].leaf.amount
       );
     });
 
     it("should succeed for every record in the data file", async () => {
-      for (let index = 0; index < jsonData.length; index += 1) {
-
+      for (let index = loop; index < end; index += 1) {
         await airdrop.redeemPackage(
           allProofs[index].leaf.index,
           allProofs[index].leaf.address,
@@ -157,11 +160,11 @@ describe("Airdrop", function () {
         );
       }
 
-      expect(await airdropToken.balanceOf(airdrop.address)).to.equal(0);
+      expect(await airdropToken.balanceOf(airdrop.address)).to.equal(endAmount);
     });
 
     it("should prevent every record from double redeeming", async () => {
-      for (let index = 0; index < jsonData.length; index += 1) {
+      for (let index = loop; index < end; index += 1) {
 
         // First succeeds.
         await airdrop.redeemPackage(
@@ -186,8 +189,7 @@ describe("Airdrop", function () {
         ).to.be.revertedWith("Airdrop: already redeemed");
       }
 
-      for (let index = 0; index < jsonData.length; index += 1) {
-
+      for (let index = loop; index < end; index += 1) {
         // Later second attempt must fail.
         await expect(
           airdrop.redeemPackage(
@@ -199,7 +201,7 @@ describe("Airdrop", function () {
         ).to.be.revertedWith("Airdrop: already redeemed");
       }
 
-      expect(await airdropToken.balanceOf(airdrop.address)).to.equal(0);
+      expect(await airdropToken.balanceOf(airdrop.address)).to.equal(endAmount);
     });
 
     it("should reduce if three weeks of blocks have passed, for 3 days", async () => {
@@ -212,7 +214,7 @@ describe("Airdrop", function () {
         allProofs[0].proof
       );
 
-      expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(4);
+      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.be.below((allProofs[0].leaf.amount));
     });
     it("should reduce if three weeks of blocks have passed, for 3 days", async () => {
       await increaseTime(ethers, 1915400);
@@ -224,7 +226,7 @@ describe("Airdrop", function () {
         allProofs[0].proof
       );
 
-      expect(await airdropToken.balanceOf(jsonData[0].address)).to.equal(55);
+      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.be.below((allProofs[0].leaf.amount));
     });
     it("should fail past deadline the reclaim leftover tokens", async () => {
       await expect(

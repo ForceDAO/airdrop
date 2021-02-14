@@ -59,6 +59,9 @@ const config: HardhatUserConfig = {
     apiKey: ETHERSCAN_API_KEY,
   },
   solidity: "0.7.3",
+  mocha: {
+    timeout: 2000000
+  }
 };
 
 export default config;

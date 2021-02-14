@@ -24,9 +24,17 @@ npm run generate-proofs
 
 ## TODO 
 
-   - [ x ] sanatize data (duplicate address, valid address, add up amount)
-  - [ x ] the 3 functions needed are add up all amounts, check for validity of address and uniqueness of address
-  - [ ] and probably should take all amounts and times them by 18 somewhere?
-  - [ ] upload to S3
-  - [ x ] add address and amount to env and/or json and pipe into deploy task 
-  - [ x ] test sanatize data 
+   - [x] sanatize data (duplicate address, valid address, add up amount)
+  - [x] the 3 functions needed are add up all amounts, check for validity of address and uniqueness of address
+  - [x] and probably should take all amounts and times them by 18 somewhere?
+  - [x] upload to S3
+  - [x] add address and amount to env and/or json and pipe into deploy task 
+  - [x] test sanatize data 
+
+
+  ## Flow 
+
+  * get data 
+  * run sanatize data 
+  * generate tree 
+  * launch contract with proper token address
