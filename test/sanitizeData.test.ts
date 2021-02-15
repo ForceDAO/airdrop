@@ -19,7 +19,7 @@ describe("sanitize", function () {
   //       `We got duplicates [{"address":"0x5b8eb89e04b7e5800e1834a4191cc67749878435","amount":"90"},{"address":"0x5b8eb89e04b7e5800e1834a4191cc67749878435","amount":"70"}]`
   //     );
   //   }
-  // });
+  // }); 
   // it("should fail with bad address", async () => {
   //   data[0].address = "0x1bd4Cec6F1CB4F26F7D620897fa1f8A9111bbB1";
   //   try {
