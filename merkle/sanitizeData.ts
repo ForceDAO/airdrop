@@ -2,7 +2,7 @@ const data = require("./prepare/addresses.json");
 import { utils, BigNumber, ethers } from "ethers";
 import { writeFileSync } from "fs";
 
-const totalAmountToDrop = 10_000_000
+const totalAmountToDrop = 2_500_000
 
 export const sanitize = (data) => {
   data.map((x) => validateAddress(x));

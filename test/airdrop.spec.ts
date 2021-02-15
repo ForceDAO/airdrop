@@ -13,7 +13,7 @@ describe("Airdrop", function () {
   let airdrop: Contract;
   let airdropToken: Contract;
 
-  const totalTokens = ethers.BigNumber.from("10000000000000000000000000")
+  const totalTokens = ethers.BigNumber.from("2500000000000000000000000")
   // //allProofs.reduce(
   //   (previousValue: any, currentValue: any) => {
   //     return previousValue.add(ethers.BigNumber.from(currentValue.amount));
