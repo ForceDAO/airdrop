@@ -78,7 +78,7 @@ contract Airdrop {
     }
 
     function reducedAmount(uint256 originalAmount)
-        private
+        public
         view
         returns (uint256)
     {
