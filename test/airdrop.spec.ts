@@ -214,7 +214,9 @@ describe("Airdrop", function () {
         allProofs[0].proof
       );
 
-      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.be.below((allProofs[0].leaf.amount));
+      expect(await airdrop.reducedAmount(allProofs[0].leaf.amount)).to.be.below((allProofs[0].leaf.amount));
+
+      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.equal(await airdrop.reducedAmount(allProofs[0].leaf.amount));
     });
     it("should reduce if three weeks of blocks have passed, for 3 days", async () => {
       await increaseTime(ethers, 1915400);
@@ -226,7 +228,9 @@ describe("Airdrop", function () {
         allProofs[0].proof
       );
 
-      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.be.below((allProofs[0].leaf.amount));
+      expect(await airdrop.reducedAmount(allProofs[0].leaf.amount)).to.be.below((allProofs[0].leaf.amount));
+
+      expect(await airdropToken.balanceOf(allProofs[0].leaf.address)).to.equal(await airdrop.reducedAmount(allProofs[0].leaf.amount));
     });
     it("should fail past deadline the reclaim leftover tokens", async () => {
       await expect(
