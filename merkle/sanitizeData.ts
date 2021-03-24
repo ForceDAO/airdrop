@@ -20,7 +20,7 @@ export const sanitize = (data) => {
       i += 1
     }
   })
-  writeFileSync(`./data.json`, JSON.stringify(formattedData));
+  writeFileSync(`./merkle/data.json`, JSON.stringify(formattedData));
 };
 
 const validateAddress = (address) => {
