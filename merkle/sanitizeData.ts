@@ -4,7 +4,7 @@ import { writeFileSync } from "fs";
 
 const totalAmountToDrop = 2_500_000
 
-export const sanitize = (data) => {
+const sanitize = (data) => {
   data.map((x) => validateAddress(x));
   const nonDuplicatedData: any = findDuplicates(data);
   console.log(data.length, nonDuplicatedData.length);
@@ -20,7 +20,7 @@ export const sanitize = (data) => {
       i += 1
     }
   })
-  writeFileSync(`./data.json`, JSON.stringify(formattedData));
+  writeFileSync('./merkle/data.json', JSON.stringify(formattedData));
 };
 
 const validateAddress = (address) => {
